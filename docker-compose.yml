@@ -1,0 +1,18 @@
+version: '3.7'
+services:
+    flask:
+      build:
+        context: ./
+        dockerfile: Dockerfile
+      ports:
+        - "5000:5000"
+      container_name: flask
+      volumes:
+        - ./src:/src/
+        - ./log/:/src/log
+      environment:
+        - PYTHONUNBUFFERED=1  # display print()
+        - FLASK_APP=/src/run.py
+        - FLASK_SECRET_KEY='top_secret_key'
+        - DEBUG=1
+      command: flask run --host=0.0.0.0
