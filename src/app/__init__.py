@@ -8,11 +8,17 @@ from app.resources.user import (
     UserRegister,
     User,
     UserLogin,
-    UserLogout
+    UserLogout,
+    UserList
 )
-from app.models.user_rights import UserRightsModel
+from app.resources.country import CountryList, Country
+from app.resources.region import RegionList, Region
+
 from app.models.user import UserModel
 
+#  remove as soon as SQL is ready
+from app.models.user_rights import UserRightsModel
+from app.models.country import CountryModel
 
 from app.db import db
 
@@ -58,6 +64,15 @@ def create_tables():
         right = UserRightsModel('admin')
         right.save_to_db()
 
+    if len([item for item in CountryModel.find_all()]) == 0:
+        country = CountryModel("USA")
+        country.save_to_db()
+        country = CountryModel("Germany")
+        country.save_to_db()
+        country = CountryModel("Finland")
+        country.save_to_db()
+        country = CountryModel("UK")
+        country.save_to_db()
 
 @jwt.token_in_blacklist_loader
 def check_if_token_in_blacklist(decrypted_token):
@@ -70,28 +85,30 @@ def add_claims_to_jwt(identity):
     rights = {
         "right_id": 1,
         "is_admin": 0,
-        "is_blocked": 1,
-        "can_edit": 0,
-        "can_seelog": 0,
-        "can_seeusers": 0
+        "is_blocked": 1
     }
     if user:
         rights = {
             "right_id": user.right_id,
             "is_admin": user.right_id == 7,
-            "is_blocked": user.right_id == 1,
-            "can_edit": user.can_edit,
-            "can_seelog": user.can_seelog,
-            "can_seeusers": user.can_seeusers
+            "is_blocked": user.right_id == 1
         }
 
     return rights
+
+
+api.add_resource(Country, '/country/<string:title>')
+api.add_resource(CountryList, '/countries')
+
+api.add_resource(Region, '/region/<int:region_id>')
+api.add_resource(RegionList, '/regions')
 
 
 api.add_resource(UserRegister, '/register')
 api.add_resource(User, '/user/<int:user_id>')
 api.add_resource(UserLogin, '/login')
 api.add_resource(UserLogout, '/logout')
+api.add_resource(UserList, '/users')
 
 
 @app.route("/")

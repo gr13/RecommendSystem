@@ -20,9 +20,6 @@ class UserModel(db.Model):
 
     username = db.Column(db.String(100), default='')
     position = db.Column(db.String(100), default='')
-    can_edit = db.Column(db.Boolean(), default=0)
-    can_seelog = db.Column(db.Boolean(), default=0)
-    can_seeusers = db.Column(db.Boolean(), default=0)
     hide = db.Column(db.Boolean(), default=0)
 
     def __init__(self, email, password):
@@ -37,9 +34,6 @@ class UserModel(db.Model):
                 'right': right.json(),
                 'username': self.username,
                 'position': self.position,
-                'can_edit': self.can_edit,
-                'can_seelog': self.can_seelog,
-                'can_seeusers': self.can_seeusers,
                 'hide': self.hide
                 }
 
@@ -51,12 +45,17 @@ class UserModel(db.Model):
     def find_by_id(cls, _id):
         return cls.query.filter_by(id=_id).first()
 
+    @classmethod
+    def find_all(cls):
+        return cls.query.all()
+
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()
 
     def delete_from_db(self):
-        pass
+        db.session.delete(self)
+        db.session.commit()
 
     # @classmethod
     # def create_hashed_password(cls, password):
