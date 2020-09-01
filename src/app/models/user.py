@@ -1,6 +1,7 @@
 from app.db import db
 from app.models.user_rights import UserRightsModel
 #from app import bcrypt
+from sqlalchemy.orm import validates
 
 import secrets
 
@@ -21,6 +22,11 @@ class UserModel(db.Model):
     username = db.Column(db.String(100), default='')
     position = db.Column(db.String(100), default='')
     hide = db.Column(db.Boolean(), default=0)
+
+    @validates('email')
+    def validate_email(self, key, email):
+        assert '@' in email
+        return email
 
     def __init__(self, email, password):
         self.email = email

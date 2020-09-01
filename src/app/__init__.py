@@ -11,6 +11,9 @@ from app.resources.user import (
     UserLogout,
     UserList
 )
+
+from app.resources.skincolor import SkinColor, SkinColorList
+
 from app.resources.country import CountryList, Country
 from app.resources.region import RegionList, Region
 
@@ -73,6 +76,16 @@ def create_tables():
         country.save_to_db()
         country = CountryModel("UK")
         country.save_to_db()
+    if len([item for item in UserModel.find_all()]) == 0:
+        user = UserModel("admin@admin.com", "test")
+        user.right_id = 7
+        user.save_to_db()
+        user = UserModel("oper@oper.com", "test")
+        user.right_id = 3
+        user.save_to_db()
+        user = UserModel("customer@customer.com", "test")
+        user.right_id = 2
+        user.save_to_db()
 
 @jwt.token_in_blacklist_loader
 def check_if_token_in_blacklist(decrypted_token):
@@ -102,6 +115,9 @@ api.add_resource(CountryList, '/countries')
 
 api.add_resource(Region, '/region/<int:region_id>')
 api.add_resource(RegionList, '/regions')
+
+api.add_resource(SkinColor, '/skincolor/<int:skincolor_id>')
+api.add_resource(SkinColorList, "/skincolors")
 
 
 api.add_resource(UserRegister, '/register')

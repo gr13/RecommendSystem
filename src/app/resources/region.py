@@ -17,5 +17,5 @@ class RegionList(Resource):
         items = RegionModel.find_all()
         if items:
             return {"regions": [item.json() for item in items]}
-        else:
-            return {"Message": "Regions are not found."}, 404
+
+        return {"Message": "Regions are not found."}, 404
