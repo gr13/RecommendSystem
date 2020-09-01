@@ -8,7 +8,7 @@ The program shows recommendations based on user parameters and demands.
 - python 3
 
 ### Usage
-Start the program with docker
+Start the program with docker <br />
   $ docker-compose up
 
 
