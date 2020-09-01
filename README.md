@@ -15,10 +15,10 @@ Start the program with docker
 ### Implementation
    1. Base structure + User support Done
       default user list:
-      {"email": "admin@admin.com","password": "test"}
-      {"email": "oper@oper.com","password": "test"}
-      {"email": "customer@customer.com","password": "test"}
-        
+      - {"email": "admin@admin.com","password": "test"}
+      - {"email": "oper@oper.com","password": "test"}
+      - {"email": "customer@customer.com","password": "test"}
+
    2. Backend
       a. Main Tables (countries, regions.)
       b. ...               
