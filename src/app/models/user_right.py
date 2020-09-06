@@ -1,7 +1,7 @@
 from app.db import db
 
 
-class UserRightsModel(db.Model):
+class UserRightModel(db.Model):
     __tablename__ = 'rights'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -9,7 +9,7 @@ class UserRightsModel(db.Model):
 
     # lazy='dynamic' does not create the list of items
     # unless it is necessary
-    users = db.relationship('UserModel', lazy='dynamic')
+    users = db.relationship('UserModel', lazy='dynamic', back_populates="right")
 
     def __init__(self, user_right):
         self.user_right = user_right

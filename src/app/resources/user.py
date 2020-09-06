@@ -29,22 +29,15 @@ _user_parser.add_argument(
 
 
 class UserRegister(Resource):
-    @jwt_required
     def post(self):
-        claims = get_jwt_claims()
-        if not claims["is_admin"]:
-            return {"message": "Only admin can register a user."}, 400
         data = _user_parser.parse_args()
         if UserModel.find_by_email(data['email']):
             return {'message': 'A user with that username already exists.'}, 400
 
-        # TODO fix the problem with circular input
-        # hashed_password = UserModel.create_hashed_password(data['password'])
-        hashed_password = data['password']
-        user = UserModel(data['email'], hashed_password)
+        user = UserModel(data['email'], data['password'])
         user.save_to_db()
 
-        return {"message": "User created successfully."}
+        return {"message": "User created successfully."}, 201
 
 
 class User(Resource):
@@ -114,7 +107,6 @@ class User(Resource):
         return item.json()
 
 
-
 class UserLogin(Resource):
     @classmethod
     def post(cls):
@@ -122,7 +114,7 @@ class UserLogin(Resource):
 
         user = UserModel.find_by_email(data['email'])
 
-        if user and safe_str_cmp(user.password, data['password']):
+        if user and user.right_id > 1 and safe_str_cmp(user.password, data['password']):
             access_token = create_access_token(identity=user.id, fresh=True)
             refresh_token = create_refresh_token(user.id)
             return {

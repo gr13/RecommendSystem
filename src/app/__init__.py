@@ -1,7 +1,6 @@
 from flask import Flask
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
-# from flask_bcrypt import Bcrypt
 from app.blacklist import BLACKLIST
 
 from app.resources.user import (
@@ -13,23 +12,10 @@ from app.resources.user import (
 )
 
 from app.resources.skincolor import SkinColor, SkinColorList
-
 from app.resources.country import CountryList, Country
 from app.resources.region import RegionList, Region
 
 from app.models.user import UserModel
-
-#  remove as soon as SQL is ready
-from app.models.user_rights import UserRightsModel
-from app.models.country import CountryModel
-
-from app.db import db
-
-import os
-import sys
-
-# flask logger
-sys.stdout = sys.stderr = open('log/flasklog.txt', 'w+')
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'Secret'  # os.environ['FLASK_SECRET_KEY']
@@ -45,47 +31,6 @@ api = Api(app)
 
 jwt = JWTManager(app)
 
-
-@app.before_first_request
-def create_tables():
-    db.create_all()
-
-    if len([item for item in UserRightsModel.find_all()]) == 0:
-        # we need to create Rights only once!
-        right = UserRightsModel('blocked')
-        right.save_to_db()
-        right = UserRightsModel('customer')
-        right.save_to_db()
-        right = UserRightsModel('operator')
-        right.save_to_db()
-        right = UserRightsModel('chief operator')
-        right.save_to_db()
-        right = UserRightsModel('manager')
-        right.save_to_db()
-        right = UserRightsModel('regional manager')
-        right.save_to_db()
-        right = UserRightsModel('admin')
-        right.save_to_db()
-
-    if len([item for item in CountryModel.find_all()]) == 0:
-        country = CountryModel("USA")
-        country.save_to_db()
-        country = CountryModel("Germany")
-        country.save_to_db()
-        country = CountryModel("Finland")
-        country.save_to_db()
-        country = CountryModel("UK")
-        country.save_to_db()
-    if len([item for item in UserModel.find_all()]) == 0:
-        user = UserModel("admin@admin.com", "test")
-        user.right_id = 7
-        user.save_to_db()
-        user = UserModel("oper@oper.com", "test")
-        user.right_id = 3
-        user.save_to_db()
-        user = UserModel("customer@customer.com", "test")
-        user.right_id = 2
-        user.save_to_db()
 
 @jwt.token_in_blacklist_loader
 def check_if_token_in_blacklist(decrypted_token):

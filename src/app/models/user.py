@@ -1,6 +1,5 @@
 from app.db import db
-from app.models.user_rights import UserRightsModel
-#from app import bcrypt
+from app.models.user_right import UserRightModel
 from sqlalchemy.orm import validates
 
 import secrets
@@ -17,7 +16,7 @@ class UserModel(db.Model):
         db.ForeignKey('rights.id'),
         default=1
     )
-    right = db.relationship('UserRightsModel')
+    right = db.relationship('UserRightModel', back_populates="users")
 
     username = db.Column(db.String(100), default='')
     position = db.Column(db.String(100), default='')
@@ -33,11 +32,11 @@ class UserModel(db.Model):
         self.password = password
 
     def json(self):
-        right = UserRightsModel.find_by_id(self.right_id)
+        right = UserRightModel.find_by_id(self.right_id)
         return {'id': self.id,
                 'email': self.email,
                 'right_id': self.right_id,
-                'right': right.json(),
+                'right': self.right.json(),
                 'username': self.username,
                 'position': self.position,
                 'hide': self.hide
@@ -62,10 +61,6 @@ class UserModel(db.Model):
     def delete_from_db(self):
         db.session.delete(self)
         db.session.commit()
-
-    # @classmethod
-    # def create_hashed_password(cls, password):
-    #     return bcrypt.generate_password_hash(password).decode('utf-8')
 
     @classmethod
     def create_random_password(cls):

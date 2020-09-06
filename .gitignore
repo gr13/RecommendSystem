@@ -5,4 +5,5 @@ __pycache__/
 
 log/
 src/app/data.db
+src/app/data_test.db
 src/.idea/
